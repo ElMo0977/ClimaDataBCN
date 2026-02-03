@@ -73,9 +73,9 @@ async function fetchFromOpenMeteo(
   let url: string;
   
   if (granularity === "hourly") {
-    url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&start_date=${from}&end_date=${to}&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m&timezone=Europe/Madrid`;
+    url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&start_date=${from}&end_date=${to}&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m&wind_speed_unit=ms&timezone=Europe/Madrid`;
   } else {
-    url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&start_date=${from}&end_date=${to}&daily=temperature_2m_mean,wind_speed_10m_max&timezone=Europe/Madrid`;
+    url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&start_date=${from}&end_date=${to}&daily=temperature_2m_mean,wind_speed_10m_max&wind_speed_unit=ms&timezone=Europe/Madrid`;
   }
 
   console.log("Fetching from Open-Meteo:", url);

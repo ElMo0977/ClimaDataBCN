@@ -70,7 +70,7 @@ export function DataTable({ observations, granularity, isLoading }: DataTablePro
               <TableHead className="font-semibold">Fecha/Hora</TableHead>
               <TableHead className="font-semibold text-right">Temp (°C)</TableHead>
               <TableHead className="font-semibold text-right">Humedad (%)</TableHead>
-              <TableHead className="font-semibold text-right">Viento (km/h)</TableHead>
+              <TableHead className="font-semibold text-right">Viento (m/s)</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

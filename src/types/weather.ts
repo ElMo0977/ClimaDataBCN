@@ -11,7 +11,7 @@ export interface Observation {
   timestamp: string; // ISO 8601
   temperature: number | null; // Celsius
   humidity: number | null; // Percentage
-  windSpeed: number | null; // km/h
+  windSpeed: number | null; // m/s
 }
 
 export type Granularity = 'hourly' | 'daily';

@@ -26,7 +26,7 @@ export function WeatherKPIs({ stats, isLoading }: WeatherKPIsProps) {
     },
     {
       label: 'Viento medio',
-      value: stats?.avgWindSpeed !== null ? `${stats?.avgWindSpeed} km/h` : '—',
+      value: stats?.avgWindSpeed !== null ? `${stats?.avgWindSpeed} m/s` : '—',
       icon: Wind,
       colorClass: 'text-wind',
       bgClass: 'bg-wind/10',
