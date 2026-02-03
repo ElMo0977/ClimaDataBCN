@@ -49,7 +49,7 @@ export function WeatherCharts({ observations, granularity, isLoading }: WeatherC
       icon: Wind,
       dataKey: 'windSpeed',
       color: 'hsl(var(--chart-wind))',
-      unit: 'km/h',
+      unit: 'm/s',
       colorClass: 'text-wind',
     },
   ];

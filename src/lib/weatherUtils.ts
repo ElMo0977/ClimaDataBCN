@@ -39,7 +39,7 @@ export function formatShortDate(timestamp: string): string {
 }
 
 export function convertToCSV(observations: Observation[]): string {
-  const headers = ['Timestamp', 'Temperature (°C)', 'Humidity (%)', 'Wind Speed (km/h)'];
+  const headers = ['Timestamp', 'Temperature (°C)', 'Humidity (%)', 'Wind Speed (m/s)'];
   const rows = observations.map(o => [
     o.timestamp,
     o.temperature ?? '',
