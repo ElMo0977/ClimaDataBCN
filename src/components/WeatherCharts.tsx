@@ -28,7 +28,7 @@ export function WeatherCharts({ observations, granularity: _granularity, isLoadi
     label: formatShortDate(obs.timestamp),
   }));
 
-  // La velocidad del viento se toma de `windSpeed` (m/s). Agrupamos con el mismo bucket temporal que ya usa el eje X.
+  // Causa raíz: antes usábamos solo `windSpeed`, por eso min/avg/max salían iguales. Ahora usamos min/max si vienen y agrupamos igual que el eje X.
   const windChartData = aggregateWindByBucket(
     observations,
     // Usamos el mismo bucket que ya se usa para el eje X: fecha corta por timestamp.
@@ -58,11 +58,12 @@ export function WeatherCharts({ observations, granularity: _granularity, isLoadi
   ];
 
   const totalLineCharts = lineCharts.length + 1; // sumamos la gráfica de viento
+  const totalChartsWithBars = totalLineCharts + 1; // + precipitación
 
   if (isLoading) {
     return (
       <div className="space-y-4">
-        {[...Array(3)].map((_, i) => (
+        {[...Array(totalChartsWithBars)].map((_, i) => (
           <div key={i} className="chart-container">
             <Skeleton className="h-4 w-32 mb-4" />
             <Skeleton className="h-48 w-full" />
@@ -181,7 +182,7 @@ export function WeatherCharts({ observations, granularity: _granularity, isLoadi
               }}
               labelStyle={{ color: 'hsl(var(--foreground))' }}
               formatter={(value: number | null, name) => [
-                value !== null ? `${value} m/s` : 'Sin datos',
+                value !== null ? `${Number(value.toFixed(1))} m/s` : 'Sin datos',
                 name,
               ]}
             />
@@ -233,7 +234,7 @@ export function WeatherCharts({ observations, granularity: _granularity, isLoadi
       {/* Precipitation Bar Chart */}
       <div 
         className="chart-container animate-slide-up"
-        style={{ animationDelay: `${totalLineCharts * 100}ms` }}
+        style={{ animationDelay: `${(totalChartsWithBars - 1) * 100}ms` }}
       >
         <div className="flex items-center gap-2 mb-4">
           <CloudRain className="h-5 w-5 text-primary" />

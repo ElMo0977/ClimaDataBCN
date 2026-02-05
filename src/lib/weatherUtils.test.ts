@@ -35,6 +35,22 @@ describe('aggregateWindByBucket', () => {
     ]);
   });
 
+  it('uses dedicated min/max fields when present and computes avg from available values', () => {
+    const data: Observation[] = [
+      {
+        ...makeObs('2024-01-01T00:00:00Z', null),
+        windSpeedMin: 2,
+        windSpeedMax: 8,
+      },
+    ];
+
+    const result = aggregateWindByBucket(data, obs => obs.timestamp);
+
+    expect(result).toEqual([
+      { time: '2024-01-01T00:00:00Z', windMin: 2, windAvg: 5, windMax: 8 },
+    ]);
+  });
+
   it('aggregates multiple points per bucket and sorts by time', () => {
     const data = [
       makeObs('2024-01-02T00:00:00Z', 8),

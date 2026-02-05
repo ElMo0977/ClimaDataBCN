@@ -22,13 +22,16 @@ export function aggregateWindByBucket(
 ): WindBucketAggregate[] {
   const buckets = new Map<
     string,
-    { label: string; values: number[]; sortTs: number | null }
+    { 
+      label: string; 
+      windValues: number[]; 
+      windMinValues: number[]; 
+      windMaxValues: number[]; 
+      sortTs: number | null;
+    }
   >();
 
   for (const obs of points) {
-    const value = obs.windSpeed;
-    if (value === null || Number.isNaN(value)) continue;
-
     const label = bucketFn(obs);
     if (!label) continue;
 
@@ -37,23 +40,54 @@ export function aggregateWindByBucket(
       : Date.parse(obs.timestamp);
 
     const existing = buckets.get(label);
-    if (existing) {
-      existing.values.push(value);
-      if (sortTs !== null && (existing.sortTs === null || sortTs < existing.sortTs)) {
-        existing.sortTs = sortTs;
-      }
-    } else {
-      buckets.set(label, { label, values: [value], sortTs });
+    const bucket = existing ?? {
+      label,
+      windValues: [] as number[],
+      windMinValues: [] as number[],
+      windMaxValues: [] as number[],
+      sortTs,
+    };
+
+    const pushIfValid = (value: number | null, arr: number[]) => {
+      if (value === null || Number.isNaN(value)) return;
+      arr.push(value);
+    };
+
+    pushIfValid(obs.windSpeed, bucket.windValues);
+    pushIfValid(obs.windSpeedMin, bucket.windMinValues);
+    pushIfValid(obs.windSpeedMax, bucket.windMaxValues);
+
+    if (sortTs !== null && (bucket.sortTs === null || sortTs < bucket.sortTs)) {
+      bucket.sortTs = sortTs;
     }
+
+    buckets.set(label, bucket);
   }
 
   const result: (WindBucketAggregate & { sortTs: number | null })[] = [];
 
   buckets.forEach(bucket => {
-    if (bucket.values.length === 0) return;
-    const min = Math.min(...bucket.values);
-    const max = Math.max(...bucket.values);
-    const avg = bucket.values.reduce((a, b) => a + b, 0) / bucket.values.length;
+    const minSource =
+      bucket.windMinValues.length > 0 ? bucket.windMinValues : bucket.windValues;
+    const maxSource =
+      bucket.windMaxValues.length > 0 ? bucket.windMaxValues : bucket.windValues;
+
+    // Para la media priorizamos windSpeed; si no hay, usamos los valores disponibles (min/max).
+    const avgSource =
+      bucket.windValues.length > 0
+        ? bucket.windValues
+        : [...bucket.windMinValues, ...bucket.windMaxValues];
+
+    if (minSource.length === 0 && maxSource.length === 0 && avgSource.length === 0) return;
+
+    const min = minSource.length ? Math.min(...minSource) : null;
+    const max = maxSource.length ? Math.max(...maxSource) : null;
+    const avg = avgSource.length
+      ? avgSource.reduce((a, b) => a + b, 0) / avgSource.length
+      : null;
+
+    if (min === null || max === null || avg === null) return;
+
     result.push({
       time: bucket.label,
       windMin: min,
